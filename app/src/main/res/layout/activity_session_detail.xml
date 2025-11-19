@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/tvDetailName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/tvDetailDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Duracion: "
+        app:layout_constraintTop_toBottomOf="@id/tvDetailName"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvDetailFocus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Foco: "
+        app:layout_constraintTop_toBottomOf="@id/tvDetailDuration"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvDetailLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Ubicacion:"
+        app:layout_constraintTop_toBottomOf="@id/tvDetailFocus"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/tvDetailTimestamp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Timestamp:"
+        app:layout_constraintTop_toBottomOf="@id/tvDetailLocation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="8dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

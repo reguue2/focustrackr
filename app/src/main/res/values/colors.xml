@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paleta principal -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- Basicos -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Colores de tema para FocusTrackr -->
+    <color name="focus_primary">#FF4CAF50</color>      <!-- verde principal -->
+    <color name="focus_primary_dark">#FF388E3C</color>
+    <color name="focus_accent">#FFFFC107</color>      <!-- amarillo/acento -->
+    <color name="focus_background">#FF121212</color>  <!-- fondo oscuro -->
+    <color name="focus_surface">#FF1E1E1E</color>     <!-- tarjetas -->
+    <color name="focus_text_primary">#FFFFFFFF</color>
+    <color name="focus_text_secondary">#B3FFFFFF</color>
+
+    <!-- Estados -->
+    <color name="focus_positive">#FF66BB6A</color>
+    <color name="focus_warning">#FFFFA000</color>
+    <color name="focus_error">#FFEF5350</color>
+</resources>

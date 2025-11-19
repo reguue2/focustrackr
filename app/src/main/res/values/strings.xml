@@ -1,0 +1,52 @@
+<resources>
+    <!-- App -->
+    <string name="app_name">FocusTrackr</string>
+
+    <!-- Login -->
+    <string name="login_title">Iniciar sesion</string>
+    <string name="login_email_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Iniciar sesion</string>
+    <string name="login_email_error">Email invalido</string>
+    <string name="login_password_error">Minimo 6 caracteres</string>
+
+    <!-- Splash -->
+    <string name="splash_title">FocusTrackr</string>
+
+    <!-- Main / Navigation -->
+    <string name="nav_sessions">Sesiones</string>
+    <string name="nav_stats">Estadisticas</string>
+
+    <!-- Sesiones -->
+    <string name="sessions_list_title">Sesiones de foco</string>
+    <string name="sessions_empty">Todavia no hay sesiones. Crea una nueva.</string>
+    <string name="session_item_focus">Foco: %1$d%%</string>
+    <string name="session_item_duration">%1$d min</string>
+
+    <!-- Nueva sesion -->
+    <string name="new_session_title">Nueva sesion</string>
+    <string name="new_session_name_hint">Nombre de la sesion</string>
+    <string name="new_session_duration_hint">Duracion objetivo (min)</string>
+    <string name="new_session_start">Iniciar</string>
+    <string name="new_session_end">Finalizar y guardar</string>
+    <string name="new_session_need_name">Nombre necesario</string>
+    <string name="new_session_too_short">Sesion demasiado corta</string>
+    <string name="new_session_started">Sesion iniciada</string>
+    <string name="new_session_saved">Sesion guardada</string>
+
+    <!-- Detalle sesion -->
+    <string name="session_detail_title">Detalle de sesion</string>
+    <string name="session_detail_duration">Duracion: %1$d min</string>
+    <string name="session_detail_focus">Foco: %1$d%%</string>
+    <string name="session_detail_location">Ubicacion: %1$.4f, %2$.4f</string>
+    <string name="session_detail_timestamp">Timestamp: %1$d</string>
+
+    <!-- Estadisticas -->
+    <string name="stats_total_minutes">Minutos totales: %1$d</string>
+
+    <!-- Genericos -->
+    <string name="generic_error">Ha ocurrido un error</string>
+    <string name="generic_ok">Aceptar</string>
+    <string name="generic_cancel">Cancelar</string>
+
+</resources>
