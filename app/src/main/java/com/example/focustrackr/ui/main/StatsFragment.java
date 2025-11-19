@@ -17,6 +17,8 @@ public class StatsFragment extends Fragment {
 
     private MainViewModel mainViewModel;
     private TextView tvTotalMinutes;
+    private TextView tvAvgFocus;
+    private TextView tvTotalSessions;
 
     public StatsFragment() {
     }
@@ -30,11 +32,32 @@ public class StatsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Asignar referencias UI
         tvTotalMinutes = view.findViewById(R.id.tvTotalMinutes);
+        tvAvgFocus = view.findViewById(R.id.tvAvgFocus);
+        tvTotalSessions = view.findViewById(R.id.tvTotalSessions);
+
+        // ViewModel
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        mainViewModel.getTotalDuration().observe(getViewLifecycleOwner(), integer -> {
-            int total = integer != null ? integer : 0;
+
+        // Observers - Total minutos
+        mainViewModel.getTotalDuration().observe(getViewLifecycleOwner(), value -> {
+            int total = value != null ? value : 0;
             tvTotalMinutes.setText("Minutos totales: " + total);
         });
+
+        // Observers - Promedio de foco
+        mainViewModel.getAvgFocus().observe(getViewLifecycleOwner(), value -> {
+            float avg = value != null ? value : 0f;
+            tvAvgFocus.setText("Promedio de foco: " + (int) avg + "%");
+        });
+
+        // Observers - Total sesiones
+        mainViewModel.getTotalSessions().observe(getViewLifecycleOwner(), value -> {
+            int total = value != null ? value : 0;
+            tvTotalSessions.setText("Numero de sesiones: " + total);
+        });
     }
+
 }

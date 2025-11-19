@@ -3,6 +3,7 @@ package com.example.focustrackr.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -60,7 +61,8 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
 
     class SessionViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvName, tvDuration, tvDate, tvFocus;
+        TextView tvName, tvDuration, tvDate;
+        ProgressBar pbFocus;
         CardView card;
 
         SessionViewHolder(@NonNull View itemView) {
@@ -69,16 +71,15 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             tvName = itemView.findViewById(R.id.tvSessionName);
             tvDuration = itemView.findViewById(R.id.tvSessionDuration);
             tvDate = itemView.findViewById(R.id.tvSessionDate);
-            tvFocus = itemView.findViewById(R.id.tvSessionFocus);
+            pbFocus = itemView.findViewById(R.id.pbItemFocus);
         }
 
         void bind(final SessionEntity session) {
             tvName.setText(session.getName());
             tvDuration.setText(session.getDurationMinutes() + " min");
-            tvFocus.setText("Foco: " + (int) session.getFocusPercentage() + "%");
+            tvDate.setText(sdf.format(new Date(session.getTimestamp())));
 
-            String dateStr = sdf.format(new Date(session.getTimestamp()));
-            tvDate.setText(dateStr);
+            pbFocus.setProgress((int) session.getFocusPercentage());
 
             card.setOnClickListener(v -> {
                 if (listener != null) {
@@ -87,4 +88,5 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             });
         }
     }
+
 }

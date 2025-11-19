@@ -6,31 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@color/focus_background"
+    android:background="@drawable/background_gradient"
     tools:context=".ui.newsession.NewSessionActivity">
 
     <!-- Título -->
     <TextView
         android:id="@+id/tvTitle"
+        style="@style/Text.FocusTrackr.Headline"
+        android:text="@string/new_session_title"
+        android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Nueva sesión"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/focus_text_primary"
-        android:gravity="center"
+        android:layout_marginBottom="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="20dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Nombre de la sesión -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSessionName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Nombre de la sesión"
-        style="@style/TextInputStyle"
+        android:hint="@string/new_session_name_hint"
+        style="@style/Widget.FocusTrackr.Input"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -38,7 +36,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSessionName"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Duración objetivo -->
@@ -46,10 +44,10 @@
         android:id="@+id/tilSessionDuration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Duración objetivo (min)"
-        style="@style/TextInputStyle"
-        app:layout_constraintTop_toBottomOf="@id/tilSessionName"
+        android:hint="@string/new_session_duration_hint"
+        style="@style/Widget.FocusTrackr.Input"
         android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tilSessionName"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -57,72 +55,69 @@
             android:id="@+id/etSessionDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"/>
+            android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Cronómetro -->
+    <!-- Cronómetro (centrado y ligeramente destacado) -->
     <Chronometer
         android:id="@+id/chronometer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
         android:textColor="@color/focus_text_primary"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
         app:layout_constraintTop_toBottomOf="@id/tilSessionDuration"
-        android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Barra de progreso de foco -->
+    <!-- Barra de progreso -->
     <ProgressBar
         android:id="@+id/pbFocusLevel"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
-        android:layout_height="8dp"
+        android:layout_height="10dp"
         android:max="100"
         android:progress="0"
         android:progressDrawable="@drawable/progress_focus"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/chronometer"
-        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Texto de foco -->
+    <!-- Indicador porcentaje -->
     <TextView
         android:id="@+id/tvFocusPercentage"
-        android:layout_width="0dp"
+        style="@style/Text.FocusTrackr.Subtitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Foco: 0%"
-        android:textColor="@color/focus_text_secondary"
-        android:gravity="right"
-        app:layout_constraintTop_toBottomOf="@id/pbFocusLevel"
         android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:text="@string/new_session_focus_init"
+        app:layout_constraintTop_toBottomOf="@id/pbFocusLevel"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botón de iniciar -->
+    <!-- Botón iniciar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartSession"
+        style="@style/Widget.FocusTrackr.Button.Primary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Iniciar sesión"
-        android:layout_marginTop="24dp"
+        android:text="@string/new_session_start"
+        android:layout_marginTop="28dp"
         app:layout_constraintTop_toBottomOf="@id/tvFocusPercentage"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cornerRadius="22dp"
-        app:elevation="6dp"
-        app:backgroundTint="@color/focus_primary"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botón de finalizar -->
+    <!-- Botón finalizar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEndSession"
+        style="@style/Widget.FocusTrackr.Button.Secondary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Finalizar y guardar"
-        android:layout_marginTop="16dp"
+        android:text="@string/new_session_end"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/btnStartSession"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:cornerRadius="22dp"
-        app:elevation="6dp"
-        app:backgroundTint="@color/focus_positive"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

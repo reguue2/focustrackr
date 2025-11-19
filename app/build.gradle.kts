@@ -69,4 +69,6 @@ dependencies {
 
     // Lottie (para splash si quieres)
     implementation("com.airbnb.android:lottie:6.5.2")
+    implementation("com.google.android.material:material:1.12.0")
+
 }

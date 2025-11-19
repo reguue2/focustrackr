@@ -20,21 +20,31 @@ public class NewSessionViewModel extends AndroidViewModel {
     public MutableLiveData<Double> longitude = new MutableLiveData<>(0.0);
     public MutableLiveData<Long> chronometerBase = new MutableLiveData<>(0L);
 
-    private long startTimeMillis;
+    private long sessionStartTime = -1;
+    private boolean sessionActive = false;
 
     public NewSessionViewModel(@NonNull Application application) {
         super(application);
         sessionRepository = new SessionRepository(application);
     }
 
+    /**
+     * Inicia la sesión si no había ninguna activa.
+     */
     public void startSession(long baseTime) {
-        startTimeMillis = System.currentTimeMillis();
+        if (sessionActive) return; // Evita múltiples sesiones
+
+        sessionStartTime = System.currentTimeMillis();
         chronometerBase.setValue(baseTime);
+        sessionActive = true;
         sessionState.setValue(SessionState.RUNNING);
     }
 
+    /**
+     * Recibe los datos de foco del sensor
+     */
     public void updateFocus(float focus) {
-        focusLevel.postValue(focus);
+        focusLevel.postValue(Math.min(100f, Math.max(0f, focus)));
     }
 
     public void updateLocation(double lat, double lon) {
@@ -42,23 +52,48 @@ public class NewSessionViewModel extends AndroidViewModel {
         longitude.postValue(lon);
     }
 
+    /**
+     * Finaliza sesión con validaciones coherentes.
+     */
     public boolean endSession(String name, int targetMinutes) {
-        long endTime = System.currentTimeMillis();
-        int durationMinutes = (int) ((endTime - startTimeMillis) / 60000);
+        if (!sessionActive || sessionStartTime < 0) return false; // No hay sesión activa
 
-        if (durationMinutes < 1) return false;
+        long now = System.currentTimeMillis();
+        int durationMinutes = Math.max(1, (int) ((now - sessionStartTime) / 60000));
+
+        // Validación básica de nombre (profesional)
+        if (name == null || name.trim().isEmpty()) return false;
+
+        float finalFocus = focusLevel.getValue() != null ? focusLevel.getValue() : 0f;
+        double lat = latitude.getValue() != null ? latitude.getValue() : 0;
+        double lon = longitude.getValue() != null ? longitude.getValue() : 0;
 
         SessionEntity entity = new SessionEntity(
-                name,
+                name.trim(),
                 durationMinutes,
-                focusLevel.getValue() != null ? focusLevel.getValue() : 0f,
-                latitude.getValue() != null ? latitude.getValue() : 0,
-                longitude.getValue() != null ? longitude.getValue() : 0,
-                endTime
+                finalFocus,
+                lat,
+                lon,
+                now
         );
 
         sessionRepository.insertSession(entity);
+
+        sessionActive = false;
         sessionState.setValue(SessionState.FINISHED);
+        resetState();
+
         return true;
+    }
+
+    /**
+     * Permite reiniciar estados al acabar.
+     */
+    private void resetState() {
+        sessionStartTime = -1;
+        focusLevel.setValue(0f);
+        latitude.setValue(0.0);
+        longitude.setValue(0.0);
+        chronometerBase.setValue(0L);
     }
 }

@@ -22,24 +22,14 @@ public class SessionRepository {
         this.sessionDao = db.sessionDao();
     }
 
-    public LiveData<List<SessionEntity>> getAllSessions() {
-        return sessionDao.getAllSessions();
-    }
-
-    public LiveData<SessionEntity> getSessionById(long id) {
-        return sessionDao.getSessionById(id);
-    }
-
-    public LiveData<Integer> getTotalDuration() {
-        return sessionDao.getTotalDuration();
-    }
+    public LiveData<List<SessionEntity>> getAllSessions() { return sessionDao.getAllSessions(); }
+    public LiveData<SessionEntity> getSessionById(long id) { return sessionDao.getSessionById(id); }
+    public LiveData<Integer> getTotalDuration() { return sessionDao.getTotalDuration(); }
+    public LiveData<Integer> getTotalSessions() { return sessionDao.getTotalSessions(); }
+    public LiveData<Float> getAvgFocus() { return sessionDao.getAvgFocus(); }
 
     public void insertSession(final SessionEntity entity) {
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                sessionDao.insert(entity);
-            }
-        });
+        executorService.execute(() -> sessionDao.insert(entity));
     }
 }
+

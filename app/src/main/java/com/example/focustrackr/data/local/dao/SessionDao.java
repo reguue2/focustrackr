@@ -21,6 +21,16 @@ public interface SessionDao {
     @Query("SELECT * FROM sessions WHERE id = :id LIMIT 1")
     LiveData<SessionEntity> getSessionById(long id);
 
+    // Total minutos
     @Query("SELECT SUM(durationMinutes) FROM sessions")
     LiveData<Integer> getTotalDuration();
+
+    // Total sesiones
+    @Query("SELECT COUNT(*) FROM sessions")
+    LiveData<Integer> getTotalSessions();
+
+    // Promedio de foco
+    @Query("SELECT AVG(focusPercentage) FROM sessions")
+    LiveData<Float> getAvgFocus();
 }
+

@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.focustrackr.R;
 import com.example.focustrackr.databinding.ActivityNewSessionBinding;
 import com.example.focustrackr.sensors.AppLocationManager;
 import com.example.focustrackr.sensors.FocusSensorManager;
@@ -65,32 +66,57 @@ public class NewSessionActivity extends AppCompatActivity {
         });
     }
 
+    private boolean sessionStarted = false;
+
     private void startSession() {
-        String name = binding.etSessionName.getText().toString();
+        String name = binding.etSessionName.getText().toString().trim();
         if (name.isEmpty()) {
-            binding.etSessionName.setError("Nombre necesario");
+            binding.etSessionName.setError(getString(R.string.new_session_need_name));
             return;
         }
 
-        viewModel.startSession(SystemClock.elapsedRealtime());
-        focusSensorManager.start();
+        if (sessionStarted) {
+            Toast.makeText(this, "La sesion ya esta en marcha", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        sessionStarted = true;
+
+        long startTime = SystemClock.elapsedRealtime();
+        viewModel.startSession(startTime);
+
+        focusSensorManager.startSafe();
         locationManager.requestLocation(viewModel::updateLocation);
 
-        Toast.makeText(this, "Sesion iniciada", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.new_session_started), Toast.LENGTH_SHORT).show();
     }
 
     private void endSession() {
-        String name = binding.etSessionName.getText().toString();
-        String durationStr = binding.etSessionDuration.getText().toString();
+        if (!sessionStarted) {
+            Toast.makeText(this, "No hay sesion activa", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        int targetMinutes = durationStr.isEmpty() ? 0 : Integer.parseInt(durationStr);
+        sessionStarted = false;
 
         focusSensorManager.stop();
 
-        boolean result = viewModel.endSession(name, targetMinutes);
+        String name = binding.etSessionName.getText().toString().trim();
+        int targetMinutes = 0;
 
-        if (!result) {
-            Toast.makeText(this, "Sesion demasiado corta", Toast.LENGTH_SHORT).show();
+        try {
+            String durationStr = binding.etSessionDuration.getText().toString();
+            targetMinutes = durationStr.isEmpty() ? 0 : Integer.parseInt(durationStr);
+        } catch (NumberFormatException ignored) {}
+
+        boolean success = viewModel.endSession(name, targetMinutes);
+
+        if (!success) {
+            Toast.makeText(this, getString(R.string.new_session_too_short), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.new_session_saved), Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
+
 }
