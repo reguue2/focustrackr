@@ -24,15 +24,19 @@
         <!-- BOTTOM NAV PERSONALIZADO -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNav"
+            style="@style/Widget.FocusTrackr.BottomNav"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:menu="@menu/menu_bottom_nav"
-            app:itemIconSize="28dp"
+            android:background="@color/splash_background"
             app:itemHorizontalTranslationEnabled="false"
-            style="@style/Widget.FocusTrackr.BottomNav"
+            app:itemIconSize="28dp"
+            app:itemIconTint="#FFFAF2"
+            app:itemRippleColor="#385366FF"
+            app:itemTextColor="#FFFAF2"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:menu="@menu/menu_bottom_nav" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -22,6 +22,14 @@ public class NewSessionViewModel extends AndroidViewModel {
 
     private long sessionStartTime = -1;
     private boolean sessionActive = false;
+    // tracking
+    private float lastFocusValue = 100f;
+    private int distractionsCount = 0;
+    private int pendingDropCounter = 0;
+    private static final int DROP_THRESHOLD = 15; // variación brusca
+    private static final int DROP_STABILITY_COUNT = 2; // número de lecturas para confirmar
+
+
 
     public NewSessionViewModel(@NonNull Application application) {
         super(application);
@@ -44,8 +52,23 @@ public class NewSessionViewModel extends AndroidViewModel {
      * Recibe los datos de foco del sensor
      */
     public void updateFocus(float focus) {
-        focusLevel.postValue(Math.min(100f, Math.max(0f, focus)));
+        focus = Math.min(100f, Math.max(0f, focus));
+
+        // Detectar caida significativa
+        if (sessionActive && focus < lastFocusValue - DROP_THRESHOLD) {
+            pendingDropCounter++;
+            if (pendingDropCounter >= DROP_STABILITY_COUNT) {
+                distractionsCount++;
+                pendingDropCounter = 0; // Reseteamos para poder detectar otra nueva
+            }
+        } else {
+            pendingDropCounter = 0;
+        }
+
+        lastFocusValue = focus;
+        focusLevel.postValue(focus);
     }
+
 
     public void updateLocation(double lat, double lon) {
         latitude.postValue(lat);
@@ -64,7 +87,13 @@ public class NewSessionViewModel extends AndroidViewModel {
         // Validación básica de nombre (profesional)
         if (name == null || name.trim().isEmpty()) return false;
 
-        float finalFocus = focusLevel.getValue() != null ? focusLevel.getValue() : 0f;
+        float rawFocus = focusLevel.getValue() != null ? focusLevel.getValue() : 0f;
+        float finalFocus;
+        if (distractionsCount == 0) {
+            finalFocus = lastFocusValue;
+        } else {
+            finalFocus = Math.max(0, 100 - (distractionsCount * 7)); // base científica simple
+        }
         double lat = latitude.getValue() != null ? latitude.getValue() : 0;
         double lon = longitude.getValue() != null ? longitude.getValue() : 0;
 
@@ -74,9 +103,9 @@ public class NewSessionViewModel extends AndroidViewModel {
                 finalFocus,
                 lat,
                 lon,
-                now
+                now,
+                distractionsCount
         );
-
         sessionRepository.insertSession(entity);
 
         sessionActive = false;
@@ -95,5 +124,9 @@ public class NewSessionViewModel extends AndroidViewModel {
         latitude.setValue(0.0);
         longitude.setValue(0.0);
         chronometerBase.setValue(0L);
+        distractionsCount = 0;
+        lastFocusValue = 100f;
+        pendingDropCounter = 0;
+
     }
 }

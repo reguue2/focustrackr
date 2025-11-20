@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient"
-    android:padding="24dp">
+    android:padding="16dp">
 
+    <!-- Título principal -->
     <TextView
         android:id="@+id/tvStatsTitle"
         style="@style/Text.FocusTrackr.Headline"
@@ -14,74 +15,76 @@
         android:gravity="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="12dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Card estadísticas -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardStats"
         style="@style/Widget.FocusTrackr.Card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="20dp"
+        app:cardElevation="4dp"
         app:layout_constraintTop_toBottomOf="@id/tvStatsTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Total minutos -->
             <TextView
                 android:id="@+id/tvTotalMinutes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 style="@style/Text.FocusTrackr.Body"
                 android:text="Minutos totales: 0" />
 
-            <!-- Promedio foco -->
             <TextView
                 android:id="@+id/tvAvgFocus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 style="@style/Text.FocusTrackr.Body"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:text="Promedio de foco: 0%" />
 
-            <!-- Total sesiones -->
             <TextView
                 android:id="@+id/tvTotalSessions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 style="@style/Text.FocusTrackr.Body"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:text="Numero de sesiones: 0" />
 
+            <TextView
+                android:id="@+id/tvBestSession"
+                style="@style/Text.FocusTrackr.Body"
+                android:layout_marginTop="10dp"
+                android:text="Mejor sesion: -" />
+
+            <TextView
+                android:id="@+id/tvWorstSession"
+                style="@style/Text.FocusTrackr.Body"
+                android:layout_marginTop="4dp"
+                android:text="Sesion mas corta: -" />
+
         </LinearLayout>
+
     </com.google.android.material.card.MaterialCardView>
 
-
+    <!-- Contenedor del gráfico -->
     <FrameLayout
         android:id="@+id/chartContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintTop_toBottomOf="@id/cardStats"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/tvChartPlaceholder"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="📊 Aqui se mostrara el grafico"
-            android:textColor="@color/focus_text_secondary"/>
-
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

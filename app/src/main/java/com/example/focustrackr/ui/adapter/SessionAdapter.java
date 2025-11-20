@@ -1,5 +1,7 @@
 package com.example.focustrackr.ui.adapter;
 
+import android.content.Context;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,9 +46,20 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
     @NonNull
     @Override
     public SessionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_session, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View v = inflater.inflate(R.layout.item_session, parent, false); // mantener así
+
+        // Pero aseguramos esto, justo después:
+        if (v.getLayoutParams() == null) {
+            v.setLayoutParams(new RecyclerView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+        }
         return new SessionViewHolder(v);
     }
+
+
 
     @Override
     public void onBindViewHolder(@NonNull SessionViewHolder holder, int position) {

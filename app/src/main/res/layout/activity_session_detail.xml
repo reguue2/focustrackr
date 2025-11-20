@@ -53,6 +53,27 @@
                 android:text="@string/session_detail_focus"
                 android:layout_marginTop="4dp" />
 
+            <!-- Barra progresiva de foco -->
+            <ProgressBar
+                android:id="@+id/pbDetailFocus"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="12dp"
+                android:progress="0"
+                android:max="100"
+                android:layout_marginTop="6dp"
+                android:progressDrawable="@drawable/progress_focus" />
+
+            <!-- Distracciones -->
+            <TextView
+                android:id="@+id/tvDetailDistractions"
+                style="@style/Text.FocusTrackr.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Distracciones detectadas: 0" />
+
+
             <TextView
                 android:id="@+id/tvDetailLocation"
                 style="@style/Text.FocusTrackr.Body"
