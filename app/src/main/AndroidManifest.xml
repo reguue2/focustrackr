@@ -2,12 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.focustrackr">
 
-    <!-- Permisos basicos -->
+    <!-- Permisos utilizados en la aplicación -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -18,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FocusTrackr">
 
-        <!-- Splash como launcher -->
+        <!-- Pantalla inicial (splash) -->
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true">
@@ -28,18 +27,22 @@
             </intent-filter>
         </activity>
 
+        <!-- Pantalla de autenticación -->
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="false" />
 
+        <!-- Pantalla principal de la aplicación -->
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />
 
+        <!-- Pantalla de creación de sesión -->
         <activity
             android:name=".ui.newsession.NewSessionActivity"
             android:exported="false" />
 
+        <!-- Pantalla de detalle de sesión -->
         <activity
             android:name=".ui.sessiondetail.SessionDetailActivity"
             android:exported="false" />

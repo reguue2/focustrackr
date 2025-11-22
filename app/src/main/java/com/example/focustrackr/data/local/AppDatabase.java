@@ -15,6 +15,10 @@ import com.example.focustrackr.data.local.entity.SessionEntity;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Base de datos Room principal de la aplicación.
+ * Versión 2 con migración desde versión 1 para añadir el campo distractionsCount.
+ */
 @Database(entities = {SessionEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -22,8 +26,12 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract SessionDao sessionDao();
 
+    // Executor para operaciones iniciales en segundo plano
     private static final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Migración de versión 1 a 2: añade la columna 'distractionsCount'.
+     */
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
@@ -31,12 +39,18 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    /**
+     * Obtiene la instancia única de la base de datos.
+     */
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "focus_db")
+                    INSTANCE = Room.databaseBuilder(
+                                    context.getApplicationContext(),
+                                    AppDatabase.class,
+                                    "focus_db"
+                            )
                             .addMigrations(MIGRATION_1_2)
                             .addCallback(roomCallback)
                             .build();
@@ -46,6 +60,10 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
+    /**
+     * Callback de creación inicial de base de datos.
+     * Se añaden tres sesiones de ejemplo.
+     */
     private static final RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -54,9 +72,9 @@ public abstract class AppDatabase extends RoomDatabase {
             dbExecutor.execute(() -> {
                 SessionDao dao = INSTANCE.sessionDao();
 
-                // Sesiones de ejemplo
+                // Inserción de datos de ejemplo para probar la aplicación
                 dao.insert(new SessionEntity("Estudio Java", 45, 72f, 40.4168, -3.7038, System.currentTimeMillis() - 86400000, 0));
-                dao.insert(new SessionEntity("Planificacion semanal", 30, 68f, 40.4175, -3.7039, System.currentTimeMillis() - 172800000, 0));
+                dao.insert(new SessionEntity("Planificación semanal", 30, 68f, 40.4175, -3.7039, System.currentTimeMillis() - 172800000, 0));
                 dao.insert(new SessionEntity("Android Layouts", 55, 81f, 40.4180, -3.7040, System.currentTimeMillis() - 3600000, 3));
             });
         }

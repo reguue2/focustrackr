@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- 🎯 Paleta base LIGHT PRODUCTIVITY -->
     <color name="focus_background_start">#F4F4F4</color>
     <color name="focus_background_end">#FFFFFF</color>
-
-    <!-- Superficies, tarjetas, inputs -->
     <color name="focus_surface">#FFFFFFFF</color>
-
-    <!-- Texto -->
     <color name="focus_text_primary">#FF000000</color>   <!-- negro -->
     <color name="focus_text_secondary">#FF555555</color> <!-- gris oscuro -->
-
-    <!-- Tema principal (verde profesional) -->
     <color name="focus_primary">#4CAF50</color>
-
-    <!-- Colores básicos -->
     <color name="white">#FFFFFFFF</color>
     <color name="splash_background">#162834</color>
 

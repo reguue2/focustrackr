@@ -9,8 +9,15 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
+/**
+ * Clase encargada de gestionar la obtención de la ubicación
+ * utilizando el proveedor de localización de Google Play Services.
+ */
 public class AppLocationManager {
 
+    /**
+     * Callback para devolver la posición obtenida.
+     */
     public interface LocationCallback {
         void onLocationResult(double lat, double lon);
     }
@@ -20,19 +27,22 @@ public class AppLocationManager {
     private final Activity activity;
     private final FusedLocationProviderClient fusedLocationClient;
 
+    /**
+     * Recibe la Activity desde la cual se solicitan los permisos y ubicación.
+     */
     public AppLocationManager(Activity activity) {
         this.activity = activity;
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
     }
 
     /**
-     * Solicita ubicación. Si no hay permisos, los pide primero.
+     * Comprueba permisos de ubicación y, si existen, obtiene la posición.
+     * Si no, solicita los permisos al usuario.
      */
     public void requestLocation(LocationCallback callback) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Pedimos permiso → NO asignamos ubicación aún
             ActivityCompat.requestPermissions(
                     activity,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -40,25 +50,28 @@ public class AppLocationManager {
             );
             return;
         }
-        // Ya hay permisos, obtenemos ubicación directamente
         getLastLocation(callback);
     }
 
     /**
-     * Se ejecuta cuando el usuario responde al permiso.
+     * Se llama tras la respuesta de solicitud de permisos.
+     * Si se aceptan, se obtiene la ubicación.
      */
     public void onRequestPermissionsResult(int requestCode, int[] grantResults, LocationCallback callback) {
         if (requestCode == REQUEST_LOCATION_CODE &&
                 grantResults.length > 0 &&
                 grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Ahora que sí hay permiso → obtener ubicación
             getLastLocation(callback);
         } else {
-            // Usuario rechaza → decidimos usar 0,0
+            // Si el usuario no da permiso, se devuelve una ubicación por defecto.
             callback.onLocationResult(0, 0);
         }
     }
 
+    /**
+     * Obtiene la última ubicación conocida del dispositivo.
+     * (Se asume permiso ya concedido)
+     */
     @SuppressWarnings("MissingPermission")
     private void getLastLocation(final LocationCallback callback) {
         fusedLocationClient.getLastLocation()

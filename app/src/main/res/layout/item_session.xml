@@ -18,13 +18,11 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Nombre de la sesión -->
         <TextView
             android:id="@+id/tvSessionName"
             style="@style/Text.FocusTrackr.Title"
             android:text="Estudio Java" />
 
-        <!-- Duración y fecha agrupadas -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +41,6 @@
                 android:text="• 12/11 18:00" />
         </LinearLayout>
 
-        <!-- Barra de progreso de foco -->
         <ProgressBar
             android:id="@+id/pbItemFocus"
             android:layout_width="match_parent"
@@ -53,7 +50,6 @@
             android:max="100"
             android:layout_marginTop="10dp" />
 
-        <!-- Porcentaje de foco -->
         <TextView
             android:id="@+id/tvFocusValue"
             style="@style/Text.FocusTrackr.Subtitle"

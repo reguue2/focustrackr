@@ -13,9 +13,13 @@ import com.example.focustrackr.ui.auth.LoginActivity;
 import com.example.focustrackr.ui.main.MainActivity;
 import com.example.focustrackr.utils.Constants;
 
+/**
+ * Pantalla de carga inicial.
+ * Muestra animación del logo y redirige según si el usuario ha iniciado sesión o no.
+ */
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DURATION = 1700; // ms
+    private static final int SPLASH_DURATION = 1700; // Duración de la pantalla splash (ms)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,23 +28,23 @@ public class SplashActivity extends AppCompatActivity {
 
         ImageView logo = findViewById(R.id.imgLogo);
 
-        // Animación sutil
+        // Animación de entrada del logo
         logo.setScaleX(0.8f);
         logo.setScaleY(0.8f);
         logo.setAlpha(0f);
         logo.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(800).start();
 
-        // Decidir a qué pantalla ir
+        // Tras la animación, decide pantalla destino
         new Handler().postDelayed(() -> {
-
             SharedPreferences prefs = getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE);
             boolean isLoggedIn = prefs.getBoolean(Constants.PREF_LOGGED_IN, false);
 
-            if (isLoggedIn) {
-                startActivity(new Intent(this, MainActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
-            }
+            // Si está logueado → ir a MainActivity, si no → LoginActivity
+            Intent intent = new Intent(
+                    this,
+                    isLoggedIn ? MainActivity.class : LoginActivity.class
+            );
+            startActivity(intent);
 
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             finish();

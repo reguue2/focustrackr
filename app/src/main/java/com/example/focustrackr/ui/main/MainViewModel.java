@@ -5,13 +5,16 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 
 import com.example.focustrackr.data.local.entity.SessionEntity;
 import com.example.focustrackr.data.repository.SessionRepository;
 
 import java.util.List;
 
+/**
+ * ViewModel de la actividad principal.
+ * Proporciona acceso a estadísticas y lista de sesiones desde el repositorio.
+ */
 public class MainViewModel extends AndroidViewModel {
 
     private final SessionRepository sessionRepository;
@@ -23,6 +26,8 @@ public class MainViewModel extends AndroidViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
         sessionRepository = new SessionRepository(application);
+
+        // Datos observables proporcionados a la UI.
         sessions = sessionRepository.getAllSessions();
         totalDuration = sessionRepository.getTotalDuration();
         totalSessions = sessionRepository.getTotalSessions();
@@ -34,4 +39,3 @@ public class MainViewModel extends AndroidViewModel {
     public LiveData<Integer> getTotalSessions() { return totalSessions; }
     public LiveData<Float> getAvgFocus() { return avgFocus; }
 }
-

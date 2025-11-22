@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- App -->
     <string name="app_name">FocusTrackr</string>
-
-    <!-- Login -->
     <string name="login_title">Iniciar sesion</string>
     <string name="login_email_hint">Correo electronico</string>
     <string name="login_password_hint">Contraseña</string>
     <string name="login_button">Entrar</string>
     <string name="login_email_error">Correo invalido</string>
     <string name="login_password_error">Minimo 6 caracteres</string>
-
-    <!-- Sesiones -->
     <string name="sessions_empty">Todavia no has registrado ninguna sesion.\nPulsa el boton + para crear una nueva.</string>
-
-    <!-- Nueva sesion -->
     <string name="new_session_title">Nueva sesion</string>
     <string name="new_session_name_hint">Nombre de la sesion</string>
     <string name="new_session_duration_hint">Duracion objetivo (min)</string>
@@ -26,15 +19,11 @@
     <string name="new_session_started">Sesion iniciada</string>
     <string name="new_session_saved">Sesion guardada correctamente</string>
     <string name="new_session_focus_init">Foco: 0%</string>
-
-    <!-- Detalle sesion -->
     <string name="session_detail_title">Detalle de sesion</string>
     <string name="session_detail_duration">Duracion: %1$d min</string>
     <string name="session_detail_focus">Nivel de foco: %1$d%%</string>
     <string name="session_detail_location">Ubicacion: %1$.4f, %2$.4f</string>
     <string name="session_detail_timestamp">Registrada en: %1$d</string>
-
-    <!-- Genericos -->
     <string name="generic_ok">Aceptar</string>
     <string name="generic_eliminar">Eliminar</string>
 

@@ -19,6 +19,10 @@ import com.example.focustrackr.databinding.ActivityNewSessionBinding;
 import com.example.focustrackr.sensors.AppLocationManager;
 import com.example.focustrackr.sensors.FocusSensorManager;
 
+/**
+ * Actividad para iniciar y finalizar una nueva sesión de concentración.
+ * Utiliza sensores para medir enfoque y ubicación del usuario.
+ */
 public class NewSessionActivity extends AppCompatActivity {
 
     private ActivityNewSessionBinding binding;
@@ -31,23 +35,26 @@ public class NewSessionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityNewSessionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // ViewModel y sensores
         viewModel = new ViewModelProvider(this).get(NewSessionViewModel.class);
         focusSensorManager = new FocusSensorManager(this);
         focusSensorManager.setFocusListener(viewModel::updateFocus);
-
         locationManager = new AppLocationManager(this);
 
         setupObservers();
         setupBackPressHandler();
 
+        // Listeners de botones
         binding.btnStartSession.setOnClickListener(v -> startSession());
         binding.btnEndSession.setOnClickListener(v -> endSession());
     }
 
+    /**
+     * Observadores de estado y nivel de enfoque.
+     */
     private void setupObservers() {
         viewModel.sessionState.observe(this, state -> {
             if (state == null) return;
@@ -72,6 +79,9 @@ public class NewSessionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Gestiona el botón atrás para evitar salir sin confirmar si hay sesión activa.
+     */
     private void setupBackPressHandler() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -83,8 +93,8 @@ public class NewSessionActivity extends AppCompatActivity {
                 }
 
                 AlertDialog dialog = new AlertDialog.Builder(NewSessionActivity.this)
-                        .setTitle("Sesion en progreso")
-                        .setMessage("Si sales ahora, la sesion se perdera. ¿Quieres salir igualmente?")
+                        .setTitle("Sesión en progreso")
+                        .setMessage("Si sales ahora, la sesión se perderá. ¿Quieres salir igualmente?")
                         .setPositiveButton("Salir", (d, w) -> {
                             sessionStarted = false;
                             focusSensorManager.stop();
@@ -106,6 +116,9 @@ public class NewSessionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Inicia la sesión si el nombre es válido.
+     */
     private void startSession() {
         String name = binding.etSessionName.getText().toString().trim();
         if (name.isEmpty()) {
@@ -114,7 +127,7 @@ public class NewSessionActivity extends AppCompatActivity {
         }
 
         if (sessionStarted) {
-            Toast.makeText(this, "La sesion ya esta en marcha", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "La sesión ya está en marcha", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -123,14 +136,17 @@ public class NewSessionActivity extends AppCompatActivity {
         viewModel.startSession(sessionStartTime);
 
         focusSensorManager.startSafe();
-        locationManager.requestLocation(viewModel::updateLocation); // <- AQUÍ YA SIN ERROR
+        locationManager.requestLocation(viewModel::updateLocation);
 
         Toast.makeText(this, getString(R.string.new_session_started), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Finaliza la sesión y guarda los datos si es válida.
+     */
     private void endSession() {
         if (!sessionStarted) {
-            Toast.makeText(this, "No hay sesion activa", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No hay sesión activa", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -154,6 +170,9 @@ public class NewSessionActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Callback de respuesta a solicitud de permisos (ubicación).
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -161,7 +180,7 @@ public class NewSessionActivity extends AppCompatActivity {
         locationManager.onRequestPermissionsResult(
                 requestCode,
                 grantResults,
-                viewModel::updateLocation // muy importante
+                viewModel::updateLocation
         );
     }
 }

@@ -9,7 +9,6 @@
     android:background="@drawable/background_gradient"
     tools:context=".ui.newsession.NewSessionActivity">
 
-    <!-- Título -->
     <TextView
         android:id="@+id/tvTitle"
         style="@style/Text.FocusTrackr.Headline"
@@ -22,7 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Nombre de la sesión -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSessionName"
         android:layout_width="0dp"
@@ -39,7 +37,6 @@
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Duración objetivo -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSessionDuration"
         android:layout_width="0dp"
@@ -58,7 +55,6 @@
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Cronómetro (centrado y ligeramente destacado) -->
     <Chronometer
         android:id="@+id/chronometer"
         android:layout_width="wrap_content"
@@ -71,7 +67,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Barra de progreso -->
     <ProgressBar
         android:id="@+id/pbFocusLevel"
         style="?android:attr/progressBarStyleHorizontal"
@@ -85,7 +80,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Indicador porcentaje -->
     <TextView
         android:id="@+id/tvFocusPercentage"
         style="@style/Text.FocusTrackr.Subtitle"
@@ -96,7 +90,6 @@
         app:layout_constraintTop_toBottomOf="@id/pbFocusLevel"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botón iniciar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnStartSession"
         style="@style/Widget.FocusTrackr.Button.Primary"
@@ -108,7 +101,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Botón finalizar -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEndSession"
         style="@style/Widget.FocusTrackr.Button.Secondary"

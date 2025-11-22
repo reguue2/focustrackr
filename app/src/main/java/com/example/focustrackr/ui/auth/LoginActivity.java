@@ -12,6 +12,10 @@ import com.example.focustrackr.databinding.ActivityLoginBinding;
 import com.example.focustrackr.ui.main.MainActivity;
 import com.example.focustrackr.utils.Constants;
 
+/**
+ * Pantalla de inicio de sesión.
+ * Valida credenciales y guarda el usuario si el acceso es correcto.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private ActivityLoginBinding binding;
@@ -21,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Si ya esta logueado, evitamos pasar por el login
+        // Si el usuario ya inició sesión, accede directamente a la pantalla principal.
         SharedPreferences prefs = getSharedPreferences(Constants.PREFS_NAME, MODE_PRIVATE);
         boolean loggedIn = prefs.getBoolean(Constants.PREF_LOGGED_IN, false);
         if (loggedIn) {
@@ -32,14 +36,22 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Inicializa el ViewModel para la lógica de validación.
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
+        /**
+         * Listener del botón de inicio de sesión.
+         * Envía email y contraseña al ViewModel.
+         */
         binding.btnLogin.setOnClickListener(v -> {
             String email = binding.etEmail.getText().toString().trim();
             String password = binding.etPassword.getText().toString();
             loginViewModel.attemptLogin(email, password);
         });
 
+        /**
+         * Observa el resultado del login y muestra errores o continua en caso de éxito.
+         */
         loginViewModel.loginState.observe(this, state -> {
             if (state == null) return;
             switch (state) {
@@ -56,6 +68,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Guarda el estado de usuario logueado y navega a la pantalla principal.
+     */
     private void saveUserAndNavigate() {
         String email = binding.etEmail.getText().toString().trim();
 
@@ -68,6 +83,9 @@ public class LoginActivity extends AppCompatActivity {
         navigateToMain(email);
     }
 
+    /**
+     * Cambia a MainActivity con transición de entrada/salida.
+     */
     private void navigateToMain(String email) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.putExtra(Constants.EXTRA_USER_EMAIL, email);

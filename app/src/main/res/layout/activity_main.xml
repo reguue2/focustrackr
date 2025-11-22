@@ -6,12 +6,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient">
 
-    <!-- Contenedor general -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- CONTENEDOR DE FRAGMENTOS -->
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="0dp"
@@ -21,7 +19,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/bottomNav"/>
 
-        <!-- BOTTOM NAV PERSONALIZADO -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNav"
             style="@style/Widget.FocusTrackr.BottomNav"

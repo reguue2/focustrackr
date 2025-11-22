@@ -7,7 +7,6 @@
     android:background="@drawable/background_gradient"
     android:padding="16dp">
 
-    <!-- Título principal -->
     <TextView
         android:id="@+id/tvStatsTitle"
         style="@style/Text.FocusTrackr.Headline"
@@ -20,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Card estadísticas -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardStats"
         style="@style/Widget.FocusTrackr.Card"
@@ -70,7 +68,6 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Contenedor del gráfico -->
     <FrameLayout
         android:id="@+id/chartContainer"
         android:layout_width="0dp"

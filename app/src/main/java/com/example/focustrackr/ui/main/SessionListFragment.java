@@ -27,13 +27,17 @@ import com.example.focustrackr.ui.sessiondetail.SessionDetailActivity;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Fragment que muestra la lista de sesiones registradas.
+ * Incluye mensaje motivacional y boton flotante para crear nueva sesión.
+ */
 public class SessionListFragment extends Fragment implements SessionAdapter.OnSessionClickListener {
 
     private FragmentSessionListBinding binding;
     private MainViewModel mainViewModel;
     private SessionAdapter adapter;
 
-    // Frases motivacionales locales
+    // Frases motivacionales internas
     private final String[] motivationalPhrases = {
             "Lo que haces hoy determina donde estaras manana.",
             "La disciplina vence al talento cuando el talento no se disciplina.",
@@ -54,18 +58,25 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
 
         setupMotivation();
 
+        // Configuración inicial del RecyclerView
         binding.recyclerSessions.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SessionAdapter(this);
         binding.recyclerSessions.setAdapter(adapter);
 
+        // Animación de aparición de lista
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
                 getContext(), R.anim.layout_fade_in
         );
         binding.recyclerSessions.setLayoutAnimation(controller);
 
+        // Observación de datos desde el ViewModel
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         mainViewModel.getSessions().observe(getViewLifecycleOwner(), this::updateList);
 
+        /**
+         * Listener para boton FAB.
+         * Disminuye tamaño brevemente como feedback antes de abrir actividad.
+         */
         binding.fabAddSession.setOnClickListener(v -> {
             binding.fabAddSession.animate().scaleX(0.85f).scaleY(0.85f).setDuration(80)
                     .withEndAction(() -> {
@@ -80,6 +91,9 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
         });
     }
 
+    /**
+     * Selecciona frase aleatoria motivacional y la muestra con animación.
+     */
     private void setupMotivation() {
         String phrase = motivationalPhrases[new Random().nextInt(motivationalPhrases.length)];
         boolean isConnected = isInternetAvailable();
@@ -93,6 +107,9 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
         binding.tvMotivation.animate().alpha(1f).setDuration(600).start();
     }
 
+    /**
+     * Comprueba disponibilidad de conexión a Internet.
+     */
     private boolean isInternetAvailable() {
         try {
             ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -106,6 +123,9 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
         }
     }
 
+    /**
+     * Actualiza la lista visible o muestra mensaje vacío si no hay sesiones.
+     */
     private void updateList(List<SessionEntity> sessions) {
         adapter.setSessions(sessions);
 
@@ -121,6 +141,10 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
         }
     }
 
+    /**
+     * Evento al pulsar una sesión de la lista.
+     * Abre pantalla de detalle.
+     */
     @Override
     public void onSessionClick(SessionEntity session) {
         Intent intent = new Intent(getActivity(), SessionDetailActivity.class);

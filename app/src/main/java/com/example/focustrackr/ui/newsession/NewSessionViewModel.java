@@ -8,6 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.focustrackr.data.local.entity.SessionEntity;
 import com.example.focustrackr.data.repository.SessionRepository;
 
+/**
+ * ViewModel que gestiona la lógica de una nueva sesión:
+ * seguimiento de tiempo, nivel de enfoque, ubicación y distracciones.
+ */
 public class NewSessionViewModel extends AndroidViewModel {
 
     private final SessionRepository sessionRepository;
@@ -21,12 +25,12 @@ public class NewSessionViewModel extends AndroidViewModel {
     private long sessionStartTime = -1;
     private boolean sessionActive = false;
 
-    // TRACKING de foco mejorado
+    // Seguimiento de foco para cálculo final
     private float lastFocusValue = 100f;
     private float accumulatedFocus = 0f;
     private int focusSamples = 0;
 
-    // distracciones
+    // Control de distracciones basado en bajones de enfoque
     private int distractionsCount = 0;
     private int pendingDropCounter = 0;
     private static final int DROP_THRESHOLD = 15;
@@ -37,6 +41,9 @@ public class NewSessionViewModel extends AndroidViewModel {
         sessionRepository = new SessionRepository(application);
     }
 
+    /**
+     * Inicia la sesión y establece tiempo base del cronómetro.
+     */
     public void startSession(long baseTime) {
         if (sessionActive) return;
         sessionStartTime = System.currentTimeMillis();
@@ -45,10 +52,13 @@ public class NewSessionViewModel extends AndroidViewModel {
         sessionState.setValue(SessionState.RUNNING);
     }
 
+    /**
+     * Actualiza nivel de enfoque y detecta posibles distracciones.
+     */
     public void updateFocus(float focus) {
         focus = Math.min(100f, Math.max(0f, focus));
 
-        // Detectar distracción
+        // Si hay un descenso notable del foco, lo contabiliza como distracción
         if (sessionActive && focus < lastFocusValue - DROP_THRESHOLD) {
             pendingDropCounter++;
             if (pendingDropCounter >= DROP_STABILITY_COUNT) {
@@ -59,7 +69,6 @@ public class NewSessionViewModel extends AndroidViewModel {
             pendingDropCounter = 0;
         }
 
-        // Acumulamos muestras reales
         lastFocusValue = focus;
         accumulatedFocus += focus;
         focusSamples++;
@@ -67,11 +76,18 @@ public class NewSessionViewModel extends AndroidViewModel {
         focusLevel.postValue(focus);
     }
 
+    /**
+     * Guarda ubicación proporcionada desde el sensor.
+     */
     public void updateLocation(double lat, double lon) {
         latitude.postValue(lat);
         longitude.postValue(lon);
     }
 
+    /**
+     * Finaliza la sesión calculando duración y promedio real de enfoque.
+     * Devuelve true si se ha podido guardar correctamente.
+     */
     public boolean endSession(String name, int targetMinutes) {
         if (!sessionActive || sessionStartTime < 0) return false;
 
@@ -80,10 +96,7 @@ public class NewSessionViewModel extends AndroidViewModel {
 
         if (name == null || name.trim().isEmpty()) return false;
 
-        // Promedio real
         float avgFocus = focusSamples > 0 ? (accumulatedFocus / focusSamples) : lastFocusValue;
-
-        // Penalización suave por distracciones
         float finalFocus = Math.max(0, avgFocus - distractionsCount * 5);
 
         double lat = latitude.getValue() != null ? latitude.getValue() : 0;
@@ -108,6 +121,9 @@ public class NewSessionViewModel extends AndroidViewModel {
         return true;
     }
 
+    /**
+     * Resetea el estado interno del ViewModel tras finalizar sesión.
+     */
     private void resetState() {
         sessionStartTime = -1;
         focusLevel.setValue(0f);

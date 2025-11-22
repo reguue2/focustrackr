@@ -12,28 +12,69 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Repositorio para gestionar el acceso a datos de sesiones.
+ * Centraliza las operaciones con Room y mantiene la lógica de acceso en segundo plano.
+ */
 public class SessionRepository {
 
     private final SessionDao sessionDao;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    /**
+     * Obtiene la instancia del DAO desde la base de datos.
+     */
     public SessionRepository(Context context) {
         AppDatabase db = AppDatabase.getInstance(context);
         this.sessionDao = db.sessionDao();
     }
 
-    public LiveData<List<SessionEntity>> getAllSessions() { return sessionDao.getAllSessions(); }
-    public LiveData<SessionEntity> getSessionById(long id) { return sessionDao.getSessionById(id); }
-    public LiveData<Integer> getTotalDuration() { return sessionDao.getTotalDuration(); }
-    public LiveData<Integer> getTotalSessions() { return sessionDao.getTotalSessions(); }
-    public LiveData<Float> getAvgFocus() { return sessionDao.getAvgFocus(); }
+    /**
+     * Recupera todas las sesiones almacenadas.
+     */
+    public LiveData<List<SessionEntity>> getAllSessions() {
+        return sessionDao.getAllSessions();
+    }
 
+    /**
+     * Recupera una sesión concreta por su ID.
+     */
+    public LiveData<SessionEntity> getSessionById(long id) {
+        return sessionDao.getSessionById(id);
+    }
+
+    /**
+     * Obtiene minutos totales registrados.
+     */
+    public LiveData<Integer> getTotalDuration() {
+        return sessionDao.getTotalDuration();
+    }
+
+    /**
+     * Devuelve la cantidad de sesiones guardadas.
+     */
+    public LiveData<Integer> getTotalSessions() {
+        return sessionDao.getTotalSessions();
+    }
+
+    /**
+     * Calcula el porcentaje medio de enfoque.
+     */
+    public LiveData<Float> getAvgFocus() {
+        return sessionDao.getAvgFocus();
+    }
+
+    /**
+     * Inserta una nueva sesión en segundo plano.
+     */
     public void insertSession(final SessionEntity entity) {
         executorService.execute(() -> sessionDao.insert(entity));
     }
+
+    /**
+     * Elimina una sesión en segundo plano.
+     */
     public void deleteSession(SessionEntity session) {
         executorService.execute(() -> sessionDao.delete(session));
     }
-
 }
-

@@ -19,8 +19,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Adaptador del RecyclerView para mostrar la lista de sesiones.
+ */
 public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionViewHolder> {
 
+    /**
+     * Listener para detectar clics sobre una sesión.
+     */
     public interface OnSessionClickListener {
         void onSessionClick(SessionEntity session);
     }
@@ -33,6 +39,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
         this.listener = listener;
     }
 
+    /**
+     * Actualiza la lista de sesiones y refresca la vista.
+     */
     public void setSessions(List<SessionEntity> newSessions) {
         sessions.clear();
         if (newSessions != null) {
@@ -47,6 +56,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_session, parent, false);
 
+        // Asegura que el item ocupa todo el ancho disponible.
         if (v.getLayoutParams() == null) {
             v.setLayoutParams(new RecyclerView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -58,8 +68,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
 
     @Override
     public void onBindViewHolder(@NonNull SessionViewHolder holder, int position) {
-        SessionEntity session = sessions.get(position);
-        holder.bind(session);
+        holder.bind(sessions.get(position));
     }
 
     @Override
@@ -67,6 +76,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
         return sessions.size();
     }
 
+    /**
+     * ViewHolder que representa cada ítem de sesión.
+     */
     class SessionViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName, tvDuration, tvDate, tvFocusValue;
@@ -80,9 +92,12 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             tvDuration = itemView.findViewById(R.id.tvSessionDuration);
             tvDate = itemView.findViewById(R.id.tvSessionDate);
             pbFocus = itemView.findViewById(R.id.pbItemFocus);
-            tvFocusValue = itemView.findViewById(R.id.tvFocusValue); // IMPORTANTE
+            tvFocusValue = itemView.findViewById(R.id.tvFocusValue);
         }
 
+        /**
+         * Asigna los datos de la sesión a los elementos visuales.
+         */
         void bind(final SessionEntity session) {
             tvName.setText(session.getName());
             tvDuration.setText(session.getDurationMinutes() + " min");
@@ -90,7 +105,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
 
             int focus = (int) session.getFocusPercentage();
             pbFocus.setProgress(focus);
-            tvFocusValue.setText("Foco: " + focus + "%"); // ← YA NO SE QUEDA EN 80
+            tvFocusValue.setText("Foco: " + focus + "%");
 
             card.setOnClickListener(v -> {
                 if (listener != null) {

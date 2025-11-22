@@ -7,7 +7,6 @@
     android:padding="24dp"
     android:background="@drawable/background_gradient">
 
-    <!-- TITULO -->
     <TextView
         android:id="@+id/tvDetailTitle"
         style="@style/Text.FocusTrackr.Headline"
@@ -20,7 +19,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="12dp" />
 
-    <!-- CARD DETALLE -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardDetail"
         android:layout_width="0dp"
@@ -53,7 +51,6 @@
                 android:text="@string/session_detail_focus"
                 android:layout_marginTop="4dp" />
 
-            <!-- Barra progresiva de foco -->
             <ProgressBar
                 android:id="@+id/pbDetailFocus"
                 style="?android:attr/progressBarStyleHorizontal"
@@ -64,7 +61,6 @@
                 android:layout_marginTop="6dp"
                 android:progressDrawable="@drawable/progress_focus" />
 
-            <!-- Distracciones -->
             <TextView
                 android:id="@+id/tvDetailDistractions"
                 style="@style/Text.FocusTrackr.Subtitle"
@@ -89,7 +85,6 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- BOTON ACEPTAR -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnBack"
         android:layout_width="0dp"
