@@ -1,9 +1,16 @@
 package com.example.focustrackr.ui.newsession;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,6 +25,8 @@ public class NewSessionActivity extends AppCompatActivity {
     private NewSessionViewModel viewModel;
     private FocusSensorManager focusSensorManager;
     private AppLocationManager locationManager;
+    private boolean sessionStarted = false;
+    private long sessionStartTime = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,21 +36,19 @@ public class NewSessionActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(NewSessionViewModel.class);
-
         focusSensorManager = new FocusSensorManager(this);
         focusSensorManager.setFocusListener(viewModel::updateFocus);
 
         locationManager = new AppLocationManager(this);
 
         setupObservers();
+        setupBackPressHandler();
 
         binding.btnStartSession.setOnClickListener(v -> startSession());
         binding.btnEndSession.setOnClickListener(v -> endSession());
     }
 
     private void setupObservers() {
-
-        // Observar el estado de la sesión
         viewModel.sessionState.observe(this, state -> {
             if (state == null) return;
             switch (state) {
@@ -49,7 +56,7 @@ public class NewSessionActivity extends AppCompatActivity {
                     binding.chronometer.stop();
                     break;
                 case RUNNING:
-                    binding.chronometer.setBase(SystemClock.elapsedRealtime());
+                    binding.chronometer.setBase(sessionStartTime);
                     binding.chronometer.start();
                     break;
                 case FINISHED:
@@ -58,7 +65,6 @@ public class NewSessionActivity extends AppCompatActivity {
             }
         });
 
-        // Observar el nivel de foco y actualizar UI en tiempo real
         viewModel.focusLevel.observe(this, focus -> {
             if (focus == null) return;
             binding.pbFocusLevel.setProgress((int) (float) focus);
@@ -66,7 +72,39 @@ public class NewSessionActivity extends AppCompatActivity {
         });
     }
 
-    private boolean sessionStarted = false;
+    private void setupBackPressHandler() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!sessionStarted) {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                    return;
+                }
+
+                AlertDialog dialog = new AlertDialog.Builder(NewSessionActivity.this)
+                        .setTitle("Sesion en progreso")
+                        .setMessage("Si sales ahora, la sesion se perdera. ¿Quieres salir igualmente?")
+                        .setPositiveButton("Salir", (d, w) -> {
+                            sessionStarted = false;
+                            focusSensorManager.stop();
+                            setEnabled(false);
+                            getOnBackPressedDispatcher().onBackPressed();
+                        })
+                        .setNegativeButton("Continuar", (d, w) -> d.dismiss())
+                        .setCancelable(false)
+                        .create();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    if (vibrator != null) {
+                        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+                    }
+                }
+                dialog.show();
+            }
+        });
+    }
 
     private void startSession() {
         String name = binding.etSessionName.getText().toString().trim();
@@ -81,12 +119,11 @@ public class NewSessionActivity extends AppCompatActivity {
         }
 
         sessionStarted = true;
-
-        long startTime = SystemClock.elapsedRealtime();
-        viewModel.startSession(startTime);
+        sessionStartTime = SystemClock.elapsedRealtime();
+        viewModel.startSession(sessionStartTime);
 
         focusSensorManager.startSafe();
-        locationManager.requestLocation(viewModel::updateLocation);
+        locationManager.requestLocation(viewModel::updateLocation); // <- AQUÍ YA SIN ERROR
 
         Toast.makeText(this, getString(R.string.new_session_started), Toast.LENGTH_SHORT).show();
     }
@@ -98,12 +135,10 @@ public class NewSessionActivity extends AppCompatActivity {
         }
 
         sessionStarted = false;
-
         focusSensorManager.stop();
 
         String name = binding.etSessionName.getText().toString().trim();
         int targetMinutes = 0;
-
         try {
             String durationStr = binding.etSessionDuration.getText().toString();
             targetMinutes = durationStr.isEmpty() ? 0 : Integer.parseInt(durationStr);
@@ -119,4 +154,14 @@ public class NewSessionActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        locationManager.onRequestPermissionsResult(
+                requestCode,
+                grantResults,
+                viewModel::updateLocation // muy importante
+        );
+    }
 }

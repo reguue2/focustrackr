@@ -21,4 +21,9 @@ public class SessionDetailViewModel extends AndroidViewModel {
     public LiveData<SessionEntity> getSessionById(long id) {
         return sessionRepository.getSessionById(id);
     }
+
+    public void deleteSession(SessionEntity session) {
+        sessionRepository.deleteSession(session);
+    }
+
 }

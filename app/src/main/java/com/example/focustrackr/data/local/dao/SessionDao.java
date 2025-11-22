@@ -2,6 +2,7 @@ package com.example.focustrackr.data.local.dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
@@ -32,5 +33,9 @@ public interface SessionDao {
     // Promedio de foco
     @Query("SELECT AVG(focusPercentage) FROM sessions")
     LiveData<Float> getAvgFocus();
+
+    @Delete
+    void delete(SessionEntity session);
+
 }
 

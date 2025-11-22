@@ -12,18 +12,8 @@
     <string name="login_email_error">Correo invalido</string>
     <string name="login_password_error">Minimo 6 caracteres</string>
 
-    <!-- Splash -->
-    <string name="splash_title">FocusTrackr</string>
-
-    <!-- Main / Navigation -->
-    <string name="nav_sessions">Sesiones</string>
-    <string name="nav_stats">Estadisticas</string>
-
     <!-- Sesiones -->
-    <string name="sessions_list_title">Historial de sesiones</string>
     <string name="sessions_empty">Todavia no has registrado ninguna sesion.\nPulsa el boton + para crear una nueva.</string>
-    <string name="session_item_focus">Foco: %1$d%%</string>
-    <string name="session_item_duration">%1$d min</string>
 
     <!-- Nueva sesion -->
     <string name="new_session_title">Nueva sesion</string>
@@ -44,12 +34,8 @@
     <string name="session_detail_location">Ubicacion: %1$.4f, %2$.4f</string>
     <string name="session_detail_timestamp">Registrada en: %1$d</string>
 
-    <!-- Estadisticas -->
-    <string name="stats_total_minutes">Minutos totales registrados: %1$d</string>
-
     <!-- Genericos -->
-    <string name="generic_error">Ha ocurrido un error</string>
     <string name="generic_ok">Aceptar</string>
-    <string name="generic_cancel">Cancelar</string>
+    <string name="generic_eliminar">Eliminar</string>
 
 </resources>

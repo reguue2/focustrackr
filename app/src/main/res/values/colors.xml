@@ -14,18 +14,8 @@
 
     <!-- Tema principal (verde profesional) -->
     <color name="focus_primary">#4CAF50</color>
-    <color name="focus_primary_dark">#388E3C</color>
-
-    <!-- Acento (amarillo suave – puedes cambiar a azul si quieres un contraste más serio) -->
-    <color name="focus_accent">#FFC107</color>
-
-    <!-- Estados -->
-    <color name="focus_positive">#66BB6A</color>   <!-- éxito / guardado -->
-    <color name="focus_warning">#FFA000</color>    <!-- atención -->
-    <color name="focus_error">#EF5350</color>      <!-- error -->
 
     <!-- Colores básicos -->
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="splash_background">#162834</color>
 

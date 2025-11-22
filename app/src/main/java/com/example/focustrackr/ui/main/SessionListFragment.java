@@ -1,6 +1,9 @@
 package com.example.focustrackr.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,12 +25,22 @@ import com.example.focustrackr.ui.newsession.NewSessionActivity;
 import com.example.focustrackr.ui.sessiondetail.SessionDetailActivity;
 
 import java.util.List;
+import java.util.Random;
 
 public class SessionListFragment extends Fragment implements SessionAdapter.OnSessionClickListener {
 
     private FragmentSessionListBinding binding;
     private MainViewModel mainViewModel;
     private SessionAdapter adapter;
+
+    // Frases motivacionales locales
+    private final String[] motivationalPhrases = {
+            "Lo que haces hoy determina donde estaras manana.",
+            "La disciplina vence al talento cuando el talento no se disciplina.",
+            "Cada minuto bien usado te acerca a tu meta.",
+            "Si esperas a estar listo, nunca empezaras.",
+            "Progreso, no perfeccion. Avanza."
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,22 +52,20 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // RecyclerView con diseño profesional
+        setupMotivation();
+
         binding.recyclerSessions.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SessionAdapter(this);
         binding.recyclerSessions.setAdapter(adapter);
 
-        // Animación de entrada de items
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(
                 getContext(), R.anim.layout_fade_in
         );
         binding.recyclerSessions.setLayoutAnimation(controller);
 
-        // ViewModel
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         mainViewModel.getSessions().observe(getViewLifecycleOwner(), this::updateList);
 
-        // FAB con mini animación de feedback
         binding.fabAddSession.setOnClickListener(v -> {
             binding.fabAddSession.animate().scaleX(0.85f).scaleY(0.85f).setDuration(80)
                     .withEndAction(() -> {
@@ -69,17 +80,41 @@ public class SessionListFragment extends Fragment implements SessionAdapter.OnSe
         });
     }
 
+    private void setupMotivation() {
+        String phrase = motivationalPhrases[new Random().nextInt(motivationalPhrases.length)];
+        boolean isConnected = isInternetAvailable();
+
+        if (!isConnected) {
+            phrase = phrase + "\n(Sin conexion)";
+        }
+
+        binding.tvMotivation.setAlpha(0f);
+        binding.tvMotivation.setText(phrase);
+        binding.tvMotivation.animate().alpha(1f).setDuration(600).start();
+    }
+
+    private boolean isInternetAvailable() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) return false;
+            NetworkCapabilities capabilities = cm.getNetworkCapabilities(cm.getActiveNetwork());
+            return capabilities != null &&
+                    (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
     private void updateList(List<SessionEntity> sessions) {
         adapter.setSessions(sessions);
 
         if (sessions == null || sessions.isEmpty()) {
-            // Mostrar mensaje con fade-in
             binding.recyclerSessions.setVisibility(View.GONE);
             binding.tvEmpty.setAlpha(0f);
             binding.tvEmpty.setVisibility(View.VISIBLE);
             binding.tvEmpty.animate().alpha(1f).setDuration(300).start();
         } else {
-            // Mostrar lista con animación
             binding.tvEmpty.setVisibility(View.GONE);
             binding.recyclerSessions.setVisibility(View.VISIBLE);
             binding.recyclerSessions.scheduleLayoutAnimation();

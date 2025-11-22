@@ -31,5 +31,9 @@ public class SessionRepository {
     public void insertSession(final SessionEntity entity) {
         executorService.execute(() -> sessionDao.insert(entity));
     }
+    public void deleteSession(SessionEntity session) {
+        executorService.execute(() -> sessionDao.delete(session));
+    }
+
 }
 

@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 public class FocusSensorManager implements SensorEventListener {
 
@@ -15,15 +14,18 @@ public class FocusSensorManager implements SensorEventListener {
 
     private final SensorManager sensorManager;
     private final Sensor accelerometer;
-
     private FocusListener listener;
 
-    private long sessionStartTime = 0;
-    private long focusedTime = 0;
     private boolean isRunning = false;
+    private float lastFocus = 100f;
 
-    private float lastX, lastY, lastZ;
-    private boolean firstEvent = true;
+    // Contador de distracciones
+    private int distractionCount = 0;
+    private long lastDistractionTs = 0;
+
+    // Control de estabilidad (para no evaluar en cada frame)
+    private long lastUpdateTs = 0;
+    private static final long UPDATE_INTERVAL_MS = 300; // 3 lecturas máximo por segundo
 
     public FocusSensorManager(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -37,10 +39,9 @@ public class FocusSensorManager implements SensorEventListener {
     public void startSafe() {
         if (isRunning || accelerometer == null) return;
         isRunning = true;
-        sessionStartTime = System.currentTimeMillis();
-        focusedTime = 0;
-        firstEvent = true;
-
+        lastFocus = 100f;
+        distractionCount = 0;
+        lastUpdateTs = 0;
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
@@ -54,44 +55,50 @@ public class FocusSensorManager implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (!isRunning || event == null) return;
 
-        if (firstEvent) {
-            lastX = event.values[0];
-            lastY = event.values[1];
-            lastZ = event.values[2];
-            firstEvent = false;
-            return;
-        }
-
-        float dx = Math.abs(event.values[0] - lastX);
-        float dy = Math.abs(event.values[1] - lastY);
-        float dz = Math.abs(event.values[2] - lastZ);
-
-        lastX = event.values[0];
-        lastY = event.values[1];
-        lastZ = event.values[2];
-
         long now = System.currentTimeMillis();
-        long elapsedTotal = now - sessionStartTime;
+        if (lastUpdateTs != 0 && now - lastUpdateTs < UPDATE_INTERVAL_MS) return;
+        lastUpdateTs = now;
 
-        if (elapsedTotal <= 0) return;
+        float x = Math.abs(event.values[0]);
+        float y = Math.abs(event.values[1]);
+        float z = Math.abs(event.values[2]);
 
-        float threshold = 0.5f;
+        // Cálculo bruto de movimiento
+        float movement = x + y + z;
 
-        // Si hay poco movimiento, consideramos que sigue enfocado
-        if (dx < threshold && dy < threshold && dz < threshold) {
-            focusedTime += 100;
+        // Ajustes de calibración
+        float movementThreshold = 10f;     // movimiento que empieza a afectar
+        float maxMovementEffect = 30f;     // movimiento muy bruto (correr, agitar)
+
+        float normalizedMovement = Math.min(Math.max(movement - movementThreshold, 0), maxMovementEffect);
+
+        // Penalización progresiva (hasta un máximo de -50%)
+        float movementPenalty = (normalizedMovement / maxMovementEffect) * 50f;
+
+        // Foco final
+        float newFocus = 100f - movementPenalty;
+
+        // Suavizamos el valor para no generar picos bruscos
+        float smoothFactor = 0.15f;
+        lastFocus = lastFocus * (1 - smoothFactor) + newFocus * smoothFactor;
+
+        // Detección de distracción → movimiento fuerte
+        if (movement > (movementThreshold + 8)) {
+            if (now - lastDistractionTs > 1200) { // al menos 1.2s entre distracciones
+                distractionCount++;
+                lastDistractionTs = now;
+            }
         }
-
-        // Limitar % y evitar NaN
-        float focusPercentage = Math.min((focusedTime * 100f) / elapsedTotal, 100f);
 
         if (listener != null) {
-            listener.onFocusLevelChanged(focusPercentage);
+            listener.onFocusLevelChanged(Math.max(0f, Math.min(100f, lastFocus)));
         }
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // No es necesario implementar lógica aquí para MVP
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    public int getDistractionCount() {
+        return distractionCount;
     }
 }

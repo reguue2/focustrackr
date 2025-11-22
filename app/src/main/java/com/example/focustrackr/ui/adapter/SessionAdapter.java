@@ -1,7 +1,5 @@
 package com.example.focustrackr.ui.adapter;
 
-import android.content.Context;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,10 +44,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
     @NonNull
     @Override
     public SessionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.item_session, parent, false); // mantener así
+        View v = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_session, parent, false);
 
-        // Pero aseguramos esto, justo después:
         if (v.getLayoutParams() == null) {
             v.setLayoutParams(new RecyclerView.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -58,8 +55,6 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
         }
         return new SessionViewHolder(v);
     }
-
-
 
     @Override
     public void onBindViewHolder(@NonNull SessionViewHolder holder, int position) {
@@ -74,7 +69,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
 
     class SessionViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvName, tvDuration, tvDate;
+        TextView tvName, tvDuration, tvDate, tvFocusValue;
         ProgressBar pbFocus;
         CardView card;
 
@@ -85,6 +80,7 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             tvDuration = itemView.findViewById(R.id.tvSessionDuration);
             tvDate = itemView.findViewById(R.id.tvSessionDate);
             pbFocus = itemView.findViewById(R.id.pbItemFocus);
+            tvFocusValue = itemView.findViewById(R.id.tvFocusValue); // IMPORTANTE
         }
 
         void bind(final SessionEntity session) {
@@ -92,7 +88,9 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             tvDuration.setText(session.getDurationMinutes() + " min");
             tvDate.setText(sdf.format(new Date(session.getTimestamp())));
 
-            pbFocus.setProgress((int) session.getFocusPercentage());
+            int focus = (int) session.getFocusPercentage();
+            pbFocus.setProgress(focus);
+            tvFocusValue.setText("Foco: " + focus + "%"); // ← YA NO SE QUEDA EN 80
 
             card.setOnClickListener(v -> {
                 if (listener != null) {
@@ -101,5 +99,4 @@ public class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.SessionV
             });
         }
     }
-
 }
