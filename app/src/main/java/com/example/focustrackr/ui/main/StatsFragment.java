@@ -20,12 +20,15 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fragment que muestra estadísticas generales de las sesiones mediante texto y gráfico de barras.
+ * Fragment que muestra estadísticas generales de las sesiones mediante
+ * texto y gráfico de barras. Se personaliza el eje X para mostrar el nombre
+ * de cada sesión y se elimina la descripción inferior de la gráfica.
  */
 public class StatsFragment extends Fragment {
 
@@ -37,25 +40,18 @@ public class StatsFragment extends Fragment {
     private TextView tvWorstSession;
     private BarChart barChart;
 
-    public StatsFragment() {
-        // Constructor vacío requerido por Fragment
-    }
+    public StatsFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Infla el layout asociado al fragment
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 
-    /**
-     * Se llama una vez creada la vista. Se inicializa UI y se observan datos del ViewModel.
-     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Referencias UI
         tvTotalMinutes = view.findViewById(R.id.tvTotalMinutes);
         tvAvgFocus = view.findViewById(R.id.tvAvgFocus);
         tvTotalSessions = view.findViewById(R.id.tvTotalSessions);
@@ -63,36 +59,28 @@ public class StatsFragment extends Fragment {
         tvWorstSession = view.findViewById(R.id.tvWorstSession);
         barChart = view.findViewById(R.id.barChart);
 
-        // Configuración ViewModel
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        // Observador de minutos totales
         mainViewModel.getTotalDuration().observe(getViewLifecycleOwner(), value -> {
-            int total = value != null ? value : 0;
-            tvTotalMinutes.setText("Minutos totales: " + total);
+            tvTotalMinutes.setText("Minutos totales: " + (value != null ? value : 0));
         });
 
-        // Observador de promedio de enfoque
         mainViewModel.getAvgFocus().observe(getViewLifecycleOwner(), value -> {
-            float avg = value != null ? value : 0f;
-            tvAvgFocus.setText("Promedio de foco: " + (int) avg + "%");
+            tvAvgFocus.setText("Promedio de foco: " + (int) (value != null ? value : 0f) + "%");
         });
 
-        // Observador número total de sesiones
         mainViewModel.getTotalSessions().observe(getViewLifecycleOwner(), value -> {
-            int total = value != null ? value : 0;
-            tvTotalSessions.setText("Número de sesiones: " + total);
+            tvTotalSessions.setText("Número de sesiones: " + (value != null ? value : 0));
         });
 
-        // Observador de sesiones para el gráfico y estadísticas adicionales
         mainViewModel.getSessions().observe(getViewLifecycleOwner(), this::updateChartAndBenchmarks);
 
-        // Configuración visual básica del gráfico
         setupChartAppearance();
     }
 
     /**
-     * Configura el aspecto del gráfico de barras.
+     * Configura el aspecto gráfico base:
+     * sin descripción, sin zoom, leyenda desactivada, etc.
      */
     private void setupChartAppearance() {
         if (barChart == null) return;
@@ -104,8 +92,8 @@ public class StatsFragment extends Fragment {
         barChart.setScaleEnabled(false);
 
         Description desc = new Description();
-        desc.setText("Duración de cada sesión (minutos)");
-        desc.setTextSize(10f);
+        desc.setText("");
+        desc.setEnabled(false);
         barChart.setDescription(desc);
 
         barChart.getLegend().setEnabled(false);
@@ -119,7 +107,7 @@ public class StatsFragment extends Fragment {
     }
 
     /**
-     * Actualiza el gráfico y muestra la mejor y peor sesión según duración.
+     * Actualiza grafica y estadísticas. Se añaden nombres de sesiones en eje X.
      */
     private void updateChartAndBenchmarks(List<SessionEntity> sessions) {
         if (barChart == null) return;
@@ -132,14 +120,15 @@ public class StatsFragment extends Fragment {
             return;
         }
 
-        // Crear entradas para gráfico: eje X = índice de la sesión, eje Y = duración (minutos)
         List<BarEntry> entries = new ArrayList<>();
+        final List<String> labels = new ArrayList<>();
+
         for (int i = 0; i < sessions.size(); i++) {
             SessionEntity s = sessions.get(i);
             entries.add(new BarEntry(i, s.getDurationMinutes()));
+            labels.add(s.getName());
         }
 
-        // Dataset configurado con colores personalizados
         BarDataSet dataSet = new BarDataSet(entries, "Duración (min)");
         dataSet.setColor(ContextCompat.getColor(requireContext(), R.color.focus_primary));
         dataSet.setValueTextColor(ContextCompat.getColor(requireContext(), R.color.focus_text_primary));
@@ -147,33 +136,30 @@ public class StatsFragment extends Fragment {
 
         BarData data = new BarData(dataSet);
         data.setBarWidth(0.6f);
-
         barChart.setData(data);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
+        xAxis.setGranularity(1f);
+        xAxis.setLabelRotationAngle(45f);
+
         barChart.animateY(600);
         barChart.invalidate();
 
-        // Identificación de la sesión con mayor y menor duración
         SessionEntity longest = sessions.get(0);
         SessionEntity shortest = sessions.get(0);
 
         for (SessionEntity s : sessions) {
-            if (s.getDurationMinutes() > longest.getDurationMinutes()) {
-                longest = s;
-            }
-            if (s.getDurationMinutes() < shortest.getDurationMinutes()) {
-                shortest = s;
-            }
+            if (s.getDurationMinutes() > longest.getDurationMinutes()) longest = s;
+            if (s.getDurationMinutes() < shortest.getDurationMinutes()) shortest = s;
         }
 
-        // Actualización de datos estadísticos
         tvBestSession.setText(
-                "Mejor sesión: " + longest.getName() +
-                        " (" + longest.getDurationMinutes() + " min)"
+                "Mejor sesión: " + longest.getName() + " (" + longest.getDurationMinutes() + " min)"
         );
 
         tvWorstSession.setText(
-                "Sesión más corta: " + shortest.getName() +
-                        " (" + shortest.getDurationMinutes() + " min)"
+                "Sesión más corta: " + shortest.getName() + " (" + shortest.getDurationMinutes() + " min)"
         );
     }
 }

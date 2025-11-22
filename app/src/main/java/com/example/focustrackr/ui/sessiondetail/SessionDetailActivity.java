@@ -23,8 +23,8 @@ import java.util.Date;
 public class SessionDetailActivity extends AppCompatActivity {
 
     private SessionDetailViewModel viewModel;
-    private TextView tvName, tvDuration, tvFocus, tvLocation, tvTimestamp;
-    private MaterialButton btnDeleteSession;
+    private TextView tvDuration, tvFocus, tvLocation, tvTimestamp;
+    private MaterialButton btnDeleteSession, btnAccept;
     private SessionEntity currentSession; // Referencia para eliminar la sesión cargada
 
     @Override
@@ -33,12 +33,12 @@ public class SessionDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_session_detail);
 
         // Referencia de componentes UI
-        tvName = findViewById(R.id.tvDetailName);
         tvDuration = findViewById(R.id.tvDetailDuration);
         tvFocus = findViewById(R.id.tvDetailFocus);
         tvLocation = findViewById(R.id.tvDetailLocation);
         tvTimestamp = findViewById(R.id.tvDetailTimestamp);
         btnDeleteSession = findViewById(R.id.btnDeleteSession);
+        btnAccept = findViewById(R.id.btnBack);
 
         // Inicialización del ViewModel
         viewModel = new ViewModelProvider(this).get(SessionDetailViewModel.class);
@@ -56,10 +56,7 @@ public class SessionDetailActivity extends AppCompatActivity {
             bindSession(session);
         });
 
-        /**
-         * Listener para eliminar sesión.
-         * Muestra confirmación antes de borrar.
-         */
+        // Listener para eliminar sesión
         btnDeleteSession.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Eliminar sesión")
@@ -72,6 +69,9 @@ public class SessionDetailActivity extends AppCompatActivity {
                     .setNegativeButton("Cancelar", (dialog, which) -> dialog.dismiss())
                     .show();
         });
+
+        // Listener del botón Aceptar: cierra la actividad
+        btnAccept.setOnClickListener(v -> finish());
     }
 
     /**
@@ -79,11 +79,9 @@ public class SessionDetailActivity extends AppCompatActivity {
      */
     private void bindSession(SessionEntity session) {
         if (session == null) return;
-
-        tvName.setText(session.getName());
         tvDuration.setText("Duración: " + session.getDurationMinutes() + " min");
         tvFocus.setText("Foco: " + (int) session.getFocusPercentage() + "%");
-        tvLocation.setText("Lat: " + session.getLatitude() + ", Lon: " + session.getLongitude());
+        tvLocation.setText("lat: " + session.getLatitude() + ", lon: " + session.getLongitude());
 
         String formattedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 .format(new Date(session.getTimestamp()));

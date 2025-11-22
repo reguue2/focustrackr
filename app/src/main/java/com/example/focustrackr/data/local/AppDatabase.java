@@ -73,9 +73,9 @@ public abstract class AppDatabase extends RoomDatabase {
                 SessionDao dao = INSTANCE.sessionDao();
 
                 // Inserción de datos de ejemplo para probar la aplicación
-                dao.insert(new SessionEntity("Estudio Java", 45, 72f, 40.4168, -3.7038, System.currentTimeMillis() - 86400000, 0));
-                dao.insert(new SessionEntity("Planificación semanal", 30, 68f, 40.4175, -3.7039, System.currentTimeMillis() - 172800000, 0));
-                dao.insert(new SessionEntity("Android Layouts", 55, 81f, 40.4180, -3.7040, System.currentTimeMillis() - 3600000, 3));
+                dao.insert(new SessionEntity("Estudio Matemáticas", 45, 72f, 40.4168, -3.7038, System.currentTimeMillis() - 86400000, 0));
+                dao.insert(new SessionEntity("Trabajo Geografía", 30, 68f, 40.4175, -3.7039, System.currentTimeMillis() - 172800000, 0));
+                dao.insert(new SessionEntity("Estudio Lengua", 55, 81f, 40.4180, -3.7040, System.currentTimeMillis() - 3600000, 3));
             });
         }
     };

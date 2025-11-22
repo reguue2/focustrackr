@@ -18,12 +18,12 @@
     <string name="new_session_too_short">Duracion insuficiente</string>
     <string name="new_session_started">Sesion iniciada</string>
     <string name="new_session_saved">Sesion guardada correctamente</string>
-    <string name="new_session_focus_init">Foco: 0%</string>
+    <string name="new_session_focus_init">Foco: 100%</string>
     <string name="session_detail_title">Detalle de sesion</string>
     <string name="session_detail_duration">Duracion: %1$d min</string>
     <string name="session_detail_focus">Nivel de foco: %1$d%%</string>
     <string name="session_detail_location">Ubicacion: %1$.4f, %2$.4f</string>
-    <string name="session_detail_timestamp">Registrada en: %1$d</string>
+    <string name="session_detail_timestamp">Fecha: %1$d</string>
     <string name="generic_ok">Aceptar</string>
     <string name="generic_eliminar">Eliminar</string>
 
