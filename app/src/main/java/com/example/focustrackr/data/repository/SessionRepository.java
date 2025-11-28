@@ -77,4 +77,19 @@ public class SessionRepository {
     public void deleteSession(SessionEntity session) {
         executorService.execute(() -> sessionDao.delete(session));
     }
+
+    /**
+     * Obtiene los minutos registradas entre dos fechas.
+     */
+    public LiveData<Integer> getDurationBetweenDates(long startDate, long endDate) {
+        return sessionDao.getDurationBetweenDates(startDate, endDate);
+    }
+
+    /**
+     * Obtiene los datos diarios (para calcular rachas).
+     */
+    public LiveData<List<SessionDao.DayDuration>> getDailyDurations() {
+        return sessionDao.getDailyDurations();
+    }
+
 }

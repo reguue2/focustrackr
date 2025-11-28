@@ -6,9 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.focustrackr.data.local.dao.SessionDao;
 import com.example.focustrackr.data.local.entity.SessionEntity;
 import com.example.focustrackr.data.repository.SessionRepository;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,6 +24,8 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<Integer> totalDuration;
     private final LiveData<Integer> totalSessions;
     private final LiveData<Float> avgFocus;
+    private final LiveData<Integer> weeklyDuration;
+    private final LiveData<List<SessionDao.DayDuration>> dailyDurations;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -32,10 +36,26 @@ public class MainViewModel extends AndroidViewModel {
         totalDuration = sessionRepository.getTotalDuration();
         totalSessions = sessionRepository.getTotalSessions();
         avgFocus = sessionRepository.getAvgFocus();
+
+        // Calcula progresión semanal desde el lunes actual hasta ahora.
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        long start = calendar.getTimeInMillis();
+        long end = System.currentTimeMillis();
+        weeklyDuration = sessionRepository.getDurationBetweenDates(start, end);
+
+        // Datos diarios para cálculo de racha.
+        dailyDurations = sessionRepository.getDailyDurations();
     }
 
     public LiveData<List<SessionEntity>> getSessions() { return sessions; }
     public LiveData<Integer> getTotalDuration() { return totalDuration; }
     public LiveData<Integer> getTotalSessions() { return totalSessions; }
     public LiveData<Float> getAvgFocus() { return avgFocus; }
+    public LiveData<Integer> getWeeklyDuration() { return weeklyDuration; }
+    public LiveData<List<SessionDao.DayDuration>> getDailyDurations() { return dailyDurations; }
 }

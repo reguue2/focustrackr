@@ -14,4 +14,7 @@ public class Constants {
 
     // Clave para envío de email entre actividades
     public static final String EXTRA_USER_EMAIL = "USER_EMAIL";
+
+    // Objetivo semanal de enfoque (minutos)
+    public static final String PREF_WEEKLY_GOAL = "weekly_goal";
 }

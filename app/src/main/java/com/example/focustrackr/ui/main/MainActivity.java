@@ -52,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 return true;
 
+            } else if (id == R.id.nav_goals) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, new GoalsFragment())
+                        .commit();
+                return true;
+
             } else if (id == R.id.nav_logout) {
                 confirmLogout();
                 return true;
@@ -59,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
             return false;
         });
+
 
         // Carga por defecto la lista de sesiones.
         if (savedInstanceState == null) {

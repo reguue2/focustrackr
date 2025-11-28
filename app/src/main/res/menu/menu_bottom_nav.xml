@@ -12,6 +12,11 @@
         android:icon="@android:drawable/ic_menu_sort_by_size" />
 
     <item
+        android:id="@+id/nav_goals"
+        android:title="Objetivos"
+        android:icon="@android:drawable/ic_menu_myplaces" />
+
+    <item
         android:id="@+id/nav_logout"
         android:title="Cerrar sesion"
         android:icon="@android:drawable/ic_lock_power_off" />

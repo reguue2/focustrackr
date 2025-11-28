@@ -58,4 +58,36 @@ public interface SessionDao {
      */
     @Delete
     void delete(SessionEntity session);
+
+    /**
+     * Calcula la suma de minutos en un rango de fechas.
+     * Utilizado para medir el progreso semanal.
+     */
+    @Query("SELECT SUM(durationMinutes) FROM sessions WHERE timestamp BETWEEN :startDate AND :endDate")
+    LiveData<Integer> getDurationBetweenDates(long startDate, long endDate);
+
+    /**
+     * Obtiene los minutos agrupados por día.
+     * Utilizado para calcular rachas consecutivas.
+     */
+    @Query("SELECT DATE(timestamp / 1000, 'unixepoch') AS day, SUM(durationMinutes) AS totalMinutes " +
+            "FROM sessions " +
+            "GROUP BY day " +
+            "ORDER BY day DESC")
+    LiveData<List<DayDuration>> getDailyDurations();
+
+    /**
+     * Obtiene las sesiones en un rango de fechas.
+     * Útil para estadísticas adicionales de la semana.
+     */
+    @Query("SELECT * FROM sessions WHERE timestamp BETWEEN :startDate AND :endDate ORDER BY durationMinutes DESC")
+    LiveData<List<SessionEntity>> getSessionsBetweenDates(long startDate, long endDate);
+
+    /**
+     * Clase para representar la duración agrupada por día.
+     */
+    class DayDuration {
+        public String day;
+        public int totalMinutes;
+    }
 }
