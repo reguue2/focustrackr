@@ -92,4 +92,12 @@ public class SessionRepository {
         return sessionDao.getDailyDurations();
     }
 
+    /**
+     * Obtiene estadísticas de ubicación.
+     */
+    public LiveData<List<SessionDao.LocationStats>> getLocationStats() {
+        return sessionDao.getLocationStats();
+    }
+
+
 }

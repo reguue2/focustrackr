@@ -77,12 +77,14 @@ public class NewSessionViewModel extends AndroidViewModel {
     }
 
     /**
-     * Guarda ubicación proporcionada desde el sensor.
+     * Guarda ubicación solo si es válida.
      */
     public void updateLocation(double lat, double lon) {
+        if (lat == 0 && lon == 0) return; // Ignora coordenadas no reales
         latitude.postValue(lat);
         longitude.postValue(lon);
     }
+
 
     /**
      * Finaliza la sesión calculando duración y promedio real de enfoque.

@@ -19,29 +19,15 @@ import java.util.concurrent.Executors;
  * Base de datos Room principal de la aplicación.
  * Versión 2 con migración desde versión 1 para añadir el campo distractionsCount.
  */
-@Database(entities = {SessionEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {SessionEntity.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
 
     public abstract SessionDao sessionDao();
 
-    // Executor para operaciones iniciales en segundo plano
     private static final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
 
-    /**
-     * Migración de versión 1 a 2: añade la columna 'distractionsCount'.
-     */
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE sessions ADD COLUMN distractionsCount INTEGER NOT NULL DEFAULT 0");
-        }
-    };
-
-    /**
-     * Obtiene la instancia única de la base de datos.
-     */
     public static AppDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -51,7 +37,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class,
                                     "focus_db"
                             )
-                            .addMigrations(MIGRATION_1_2)
+                            .fallbackToDestructiveMigration()
                             .addCallback(roomCallback)
                             .build();
                 }
@@ -60,23 +46,54 @@ public abstract class AppDatabase extends RoomDatabase {
         return INSTANCE;
     }
 
-    /**
-     * Callback de creación inicial de base de datos.
-     * Se añaden tres sesiones de ejemplo.
-     */
     private static final RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
             dbExecutor.execute(() -> {
-                SessionDao dao = INSTANCE.sessionDao();
+                AppDatabase database = INSTANCE;
+                if (database == null) return;
 
-                // Inserción de datos de ejemplo para probar la aplicación
-                dao.insert(new SessionEntity("Estudio Matemáticas", 45, 72f, 40.4168, -3.7038, System.currentTimeMillis() - 86400000, 0));
-                dao.insert(new SessionEntity("Trabajo Geografía", 30, 68f, 40.4175, -3.7039, System.currentTimeMillis() - 172800000, 0));
-                dao.insert(new SessionEntity("Estudio Lengua", 55, 81f, 40.4180, -3.7040, System.currentTimeMillis() - 3600000, 3));
+                SessionDao dao = database.sessionDao();
+
+                long now = System.currentTimeMillis();
+                long monday = now - (4 * 24 * 60 * 60 * 1000);
+                long wednesday = now - (2 * 24 * 60 * 60 * 1000);
+                long today = now - (2 * 60 * 60 * 1000);
+
+                dao.insert(new SessionEntity(
+                        "Estudio Matemáticas",
+                        50,
+                        75f,
+                        40.4168,   // Madrid
+                        -3.7038,
+                        monday,
+                        1
+                ));
+
+                dao.insert(new SessionEntity(
+                        "Trabajo Historia",
+                        35,
+                        70f,
+                        41.3879,   // Barcelona
+                        2.16992,
+                        wednesday,
+                        0
+                ));
+
+                dao.insert(new SessionEntity(
+                        "Estudio Programación",
+                        60,
+                        85f,
+                        39.4699,   // Valencia
+                        -0.3763,
+                        today,
+                        2
+                ));
+
             });
         }
     };
 }
+

@@ -3,6 +3,7 @@ package com.example.focustrackr.ui.newsession;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -31,6 +32,8 @@ public class NewSessionActivity extends AppCompatActivity {
     private AppLocationManager locationManager;
     private boolean sessionStarted = false;
     private long sessionStartTime = 0L;
+
+    private final Handler locationHandler = new Handler(); // Handler para actualizaciones de ubicación
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,7 @@ public class NewSessionActivity extends AppCompatActivity {
                         .setPositiveButton("Salir", (d, w) -> {
                             sessionStarted = false;
                             focusSensorManager.stop();
+                            locationHandler.removeCallbacksAndMessages(null); // Detener actualizaciones
                             setEnabled(false);
                             getOnBackPressedDispatcher().onBackPressed();
                         })
@@ -136,9 +140,26 @@ public class NewSessionActivity extends AppCompatActivity {
         viewModel.startSession(sessionStartTime);
 
         focusSensorManager.startSafe();
-        locationManager.requestLocation(viewModel::updateLocation);
+
+        // Iniciar actualizaciones periódicas de ubicación
+        startLocationUpdates();
 
         Toast.makeText(this, getString(R.string.new_session_started), Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Actualiza la ubicación cada 5 segundos mientras la sesión esté activa.
+     */
+    private void startLocationUpdates() {
+        locationHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (sessionStarted) {
+                    locationManager.requestLocation(viewModel::updateLocation);
+                    locationHandler.postDelayed(this, 5000); // Actualiza cada 5 segundos
+                }
+            }
+        }, 1000); // Primera actualización tras 1 segundo
     }
 
     /**
@@ -152,7 +173,15 @@ public class NewSessionActivity extends AppCompatActivity {
 
         sessionStarted = false;
         focusSensorManager.stop();
+        locationHandler.removeCallbacksAndMessages(null); // Detener actualizaciones de ubicación
 
+        terminarSesionConDatos();
+    }
+
+    /**
+     * Guarda datos y finaliza actividad.
+     */
+    private void terminarSesionConDatos() {
         String name = binding.etSessionName.getText().toString().trim();
         int targetMinutes = 0;
         try {

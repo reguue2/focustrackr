@@ -37,16 +37,26 @@ public class MainViewModel extends AndroidViewModel {
         totalSessions = sessionRepository.getTotalSessions();
         avgFocus = sessionRepository.getAvgFocus();
 
-        // Calcula progresión semanal desde el lunes actual hasta ahora.
+        // Calcula progreso semanal desde el LUNES real hasta ahora
         Calendar calendar = Calendar.getInstance();
+
+        // Definir que la semana empieza el LUNES
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+        // Resetear hora para inicio del día
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+
+        // Ajustar al LUNES de la semana actual
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+
         long start = calendar.getTimeInMillis();
         long end = System.currentTimeMillis();
+
         weeklyDuration = sessionRepository.getDurationBetweenDates(start, end);
+
 
         // Datos diarios para cálculo de racha.
         dailyDurations = sessionRepository.getDailyDurations();

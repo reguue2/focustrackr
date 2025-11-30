@@ -90,4 +90,23 @@ public interface SessionDao {
         public String day;
         public int totalMinutes;
     }
+    /**
+     * Obtiene estadísticas agrupadas por ubicación (latitud y longitud).
+     * Excluye ubicaciones sin datos (0,0).
+     */
+    @Query("SELECT latitude, longitude, SUM(durationMinutes) AS totalMinutes, AVG(focusPercentage) AS avgFocus " +
+            "FROM sessions " +
+            "WHERE NOT (latitude = 0 AND longitude = 0) " +
+            "GROUP BY latitude, longitude")
+    LiveData<List<LocationStats>> getLocationStats();
+
+    /**
+     * Clase para representar estadísticas por ubicación.
+     */
+    class LocationStats {
+        public double latitude;
+        public double longitude;
+        public int totalMinutes;
+        public float avgFocus;
+    }
 }

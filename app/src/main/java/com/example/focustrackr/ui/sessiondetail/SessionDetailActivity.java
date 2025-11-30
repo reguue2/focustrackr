@@ -81,7 +81,14 @@ public class SessionDetailActivity extends AppCompatActivity {
         if (session == null) return;
         tvDuration.setText("Duración: " + session.getDurationMinutes() + " min");
         tvFocus.setText("Foco: " + (int) session.getFocusPercentage() + "%");
-        tvLocation.setText("lat: " + session.getLatitude() + ", lon: " + session.getLongitude());
+        double lat = session.getLatitude();
+        double lon = session.getLongitude();
+
+        if (lat == 0 && lon == 0) {
+            tvLocation.setText("Ubicacion no disponible");
+        } else {
+            tvLocation.setText("lat: " + lat + ", lon: " + lon);
+        }
 
         String formattedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                 .format(new Date(session.getTimestamp()));

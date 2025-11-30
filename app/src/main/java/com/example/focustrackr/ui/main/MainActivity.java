@@ -59,6 +59,13 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 return true;
 
+            }else if (id == R.id.nav_location) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, new LocationFragment())
+                        .commit();
+                return true;
+
             } else if (id == R.id.nav_logout) {
                 confirmLogout();
                 return true;
